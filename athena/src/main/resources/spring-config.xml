@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+   <bean id="nioSelector" class="com.bwsoft.athena.nio.NIOSelector" scope="singleton" lazy-init="false"/>
+
+	<!-- 
+		depends-on is added to enforce nioSelector is created first (not necessary).
+		lazy-init is added. Otherwise the bean will be created even there is no explicit 
+		usage in the code. 
+	 -->
+	<bean id="asyncMulticastListener" class="com.bwsoft.athena.nio.AsyncMulticastListener" 
+		init-method="init" destroy-method="destroy"  depends-on="nioSelector" lazy-init="true">
+		<constructor-arg type="java.lang.String" value="wlan0"/>
+		<constructor-arg type="java.lang.String" value="230.230.230.100"/>
+		<constructor-arg type="int" value="20023"/>
+		<property name="nioSelector" ref="nioSelector"/>
+	</bean>
+</beans>
