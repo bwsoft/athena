@@ -13,6 +13,7 @@ import java.nio.channels.SelectionKey;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 public class AsyncMulticastListener {
 	private static final Logger logger = LoggerFactory.getLogger(AsyncMulticastListener.class);
@@ -34,10 +35,17 @@ public class AsyncMulticastListener {
 		this.port = port;
 	}
 	
+	@Required
 	public void setNioSelector(NIOSelector selector) {
 		this.selector = selector;
 	}
 	
+	/**
+	 * To start listener in init complicates the NIOSelector design. It has to be ensure there is 
+	 * no dead lock. Otherwise the bean creation will be hanging. 
+	 *  
+	 * @throws IOException
+	 */
 	public void init() throws IOException {
 		logger.info("init async multicast listener");
 		if( null == selector )

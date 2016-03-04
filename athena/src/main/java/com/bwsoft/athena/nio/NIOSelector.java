@@ -7,10 +7,11 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -33,9 +34,8 @@ public class NIOSelector extends Thread {
 	
 	private Selector selector;
 	
-	private final ReentrantLock lock = new ReentrantLock(true);
-	
 	private ExecutorService service = Executors.newSingleThreadExecutor();
+	private Registration pendingRegistration = null;
 	
 	public NIOSelector() throws IOException {
 		selector = Selector.open();
@@ -49,29 +49,9 @@ public class NIOSelector extends Thread {
 	 * @param interestSet The interest set. 
 	 * @param callback Consumer to be activated with the SelectionKey upon an IO event.
 	 * @return A future to indicate if the registration successful. 
-	 * @throws ClosedChannelException
 	 */
-	public Future<Boolean> register(SelectableChannel channel, int interestSet, Consumer<SelectionKey> callback) throws ClosedChannelException {
-		try {
-			// TODO: no lock is needed
-			lock.lock();
-			logger.debug("lock the registration lock.");
-			
-			return service.submit(()->{
-				try {
-					channel.register(selector, interestSet, callback);
-				} catch (Exception e) {
-					logger.error("failed to register to selector",e);
-					return false;
-				}
-				selector.wakeup();
-				logger.info("a channel is added to the selector");
-				return true;
-			});
-		} finally {
-			logger.debug("release the registration lock.");
-			lock.unlock();
-		}
+	public Future<Boolean> register(SelectableChannel channel, int interestSet, Consumer<SelectionKey> callback) {
+		return service.submit(new Registration(channel, interestSet, callback));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -81,8 +61,12 @@ public class NIOSelector extends Thread {
 		while( true ) {
 			try {
 				int readiness = selector.select();
-				
+				if( null != pendingRegistration ) {
+					pendingRegistration.register();
+					pendingRegistration = null;
+				}
 				if( readiness == 0 ) continue;
+				
 				logger.debug("{} channles with events", readiness);
 				Set<SelectionKey> keys = selector.selectedKeys();
 				Iterator<SelectionKey> it = keys.iterator();
@@ -99,6 +83,43 @@ public class NIOSelector extends Thread {
 			} catch ( Exception e ) {
 				logger.error("selector loop exception",e);
 			}
+		}
+	}
+	
+	private class Registration implements Callable<Boolean> {
+		private final SelectableChannel channel;
+		private final int interestSet;
+		private final Consumer<SelectionKey> callback;
+		
+		private boolean isSuccess;
+		
+		Registration(SelectableChannel channel, int interestSet, Consumer<SelectionKey> callback) {
+			this.channel = channel;
+			this.interestSet = interestSet;
+			this.callback = callback;
+			
+			this.isSuccess = false;
+		}
+		
+		void register() {
+			try {
+				channel.register(selector, interestSet, callback);
+				isSuccess = true;
+				logger.info("channel is registered in the selector");
+			} catch (ClosedChannelException e) {
+				logger.error("failed in registration", e);
+				isSuccess = false;
+			} 
+		}
+
+		@Override
+		public Boolean call() throws Exception {
+			pendingRegistration = this;
+			while( null != pendingRegistration ) {
+				selector.wakeup();
+				LockSupport.parkNanos(10000000);
+			}
+			return isSuccess;
 		}
 	}
 }
