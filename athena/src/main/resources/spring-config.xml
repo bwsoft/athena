@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/context
-    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd ">
 
 	<context:annotation-config />
+
+	<!-- AOP to enable the call trace  -->
+	<bean id="aspectToTraceCall" class="com.bwsoft.athena.util.AspectToTraceCall"/>
 
 	<bean id="nioSelector" class="com.bwsoft.athena.nio.NIOSelector"
 		scope="singleton" lazy-init="false" />
@@ -32,4 +39,15 @@
 		<property name="repeat" value="100"/>
 		<property name="sendingInterval" value="1000"/>
 	</bean>
+
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<aop:config>		
+		<aop:aspect id="traceCall" ref="aspectToTraceCall">
+			<aop:pointcut expression="@annotation(com.bwsoft.athena.util.TraceCall)" id="callTrace"/>
+			
+			<aop:before method="beforeCall" arg-names="joinPoint" pointcut-ref="callTrace"/>
+			<aop:after-returning method="returnCall" returning="retValue" pointcut-ref="callTrace"/>
+			<aop:after-throwing method="throwException" pointcut-ref="callTrace"/>
+		</aop:aspect>
+	</aop:config>
 </beans>

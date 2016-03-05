@@ -16,6 +16,8 @@ import java.util.concurrent.locks.LockSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bwsoft.athena.util.TraceCall;
+
 public class MulticastSender {
 	private static final Logger logger = LoggerFactory.getLogger(AsyncMulticastListener.class);
 	
@@ -51,6 +53,7 @@ public class MulticastSender {
 		this.msg = msg;
 	}
 	
+	@TraceCall
 	public void start() throws IOException {
 		try (DatagramChannel channel = DatagramChannel.open()
 				.setOption(StandardSocketOptions.IP_MULTICAST_IF, nic)

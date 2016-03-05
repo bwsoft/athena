@@ -17,6 +17,8 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bwsoft.athena.util.TraceCall;
+
 /**
  * Selector is not thread-safe. It is a good practice to do all operations via a single thread. 
  * This class takes care of the registration and the NIO event selection. Both are done via the 
@@ -39,7 +41,6 @@ public class NIOSelector extends Thread {
 	
 	public NIOSelector() throws IOException {
 		selector = Selector.open();
-		logger.info("NIOSelector is constructor");
 	}
 	
 	/**
@@ -50,6 +51,7 @@ public class NIOSelector extends Thread {
 	 * @param callback Consumer to be activated with the SelectionKey upon an IO event.
 	 * @return A future to indicate if the registration successful. 
 	 */
+	@TraceCall
 	public Future<Boolean> register(SelectableChannel channel, int interestSet, Consumer<SelectionKey> callback) {
 		return service.submit(new Registration(channel, interestSet, callback));
 	}

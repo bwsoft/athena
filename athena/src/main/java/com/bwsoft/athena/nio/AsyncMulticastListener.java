@@ -47,7 +47,6 @@ public class AsyncMulticastListener {
 	 * @throws IOException
 	 */
 	public void init() throws IOException {
-		logger.info("init async multicast listener");
 		if( null == selector )
 			throw new NullPointerException("selector is not defined");
 		
