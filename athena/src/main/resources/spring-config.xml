@@ -40,6 +40,13 @@
 		<property name="sendingInterval" value="1000"/>
 	</bean>
 
+	<!-- Demo of asymmetric public/private key encryption -->
+	<bean id="rsaCipher" class="com.bwsoft.athena.ssl.RSACipher" lazy-init="true">
+		<property name="publicKeyFile" value="src/main/resources/public.key"/>
+		<property name="privateKeyFile" value="src/main/resources/private.der"/>
+		<property name="transformation" value="RSA/ECB/PKCS1Padding"/>
+	</bean>
+	
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	<aop:config>		
 		<aop:aspect id="traceCall" ref="aspectToTraceCall">
