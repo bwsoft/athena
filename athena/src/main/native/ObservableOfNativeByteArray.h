@@ -15,6 +15,22 @@ extern "C" {
 JNIEXPORT void JNICALL Java_com_bwsoft_athena_jni_ObservableOfNativeByteArray_startNativeObservable
   (JNIEnv *, jobject);
 
+/*
+ * Class:     com_bwsoft_athena_jni_ObservableOfNativeByteArray
+ * Method:    stopNativeObservable
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_bwsoft_athena_jni_ObservableOfNativeByteArray_stopNativeObservable
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_bwsoft_athena_jni_ObservableOfNativeByteArray
+ * Method:    getNativeEvent
+ * Signature: ()[B
+ */
+JNIEXPORT jbyteArray JNICALL Java_com_bwsoft_athena_jni_ObservableOfNativeByteArray_getNativeEvent
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif
