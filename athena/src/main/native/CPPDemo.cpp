@@ -22,6 +22,13 @@ int sub( int a, int b ) {
 	return a-b;
 }
 
+int & demoMin(int &a, int &b) {
+	if( a <= b )
+		return a;
+	else
+		return b;
+}
+
 CPPDemo::CPPDemo() {
 	// TODO Auto-generated constructor stub
 	x = 0;
@@ -95,6 +102,11 @@ int main() {
 	// or one can use a rvalue
 	string && rname = demo1.getName();
 	cout << "rvalue of the name is: " << rname << endl;
+
+	// function by default is lvalue (min function is returning a constant and cannot be reassigned).
+	int a = 4, b = 10;
+	demoMin(a,b) = 0;
+	cout << "the value of a is returned by min and assigned a value of " << a << endl;
 
 	// function pointer
 	int (*func) (int, int) = add;
