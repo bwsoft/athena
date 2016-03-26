@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+<xsd:annotation>
+<xsd:documentation xml:lang="en">
+    Participant mapping XML schema file
+    Version history:
+      0.1 - initial creation
+</xsd:documentation>
+</xsd:annotation>
+
+<xsd:element name="ParticipantMapping" type="participantMappingType">
+	<xsd:unique name="uniqueILinkSenderCompID">
+		<xsd:selector xpath="./MappingEntry"/>
+		<xsd:field xpath="@iLinkSenderCompID"/>
+	</xsd:unique>
+</xsd:element>
+
+<xsd:complexType name="participantMappingType">
+	<xsd:sequence>
+		<xsd:element name="MappingEntry" type="MappingEntryType" minOccurs="0" maxOccurs="unbounded"/>
+	</xsd:sequence>
+	<xsd:attribute name="creation-date" type="xsd:dateTime" use="required"/>
+	<xsd:attribute name="fromExchange" type="xsd:string" use="required" fixed="RemoteExch"/>
+	<xsd:attribute name="toExchange" type="xsd:string" use="required" fixed="LocalExch"/>
+	<xsd:attribute name="numEntries" type="xsd:integer" use="required"/>
+</xsd:complexType>
+
+<xsd:complexType name="MappingEntryType">
+	<xsd:attribute name="iLinkSenderCompID" type="NonZeroLengthString" use="required"/>
+	<xsd:attribute name="CustomerID" type="NonZeroLengthString" use="required"/>
+	<xsd:attribute name="MemberID" type="NonZeroLengthString" use="required"/>
+	<xsd:attribute name="BranchID" type="NonZeroLengthString" use="required"/>
+	<xsd:attribute name="TellerID" type="NonZeroLengthString" use="required"/>
+	<xsd:attribute name="ConnectionID" type="NonZeroLengthString" use="required"/>
+</xsd:complexType>
+
+<xsd:simpleType name="NonZeroLengthString">
+	<xsd:restriction base="xsd:string">
+		<xsd:minLength value="1"/>
+	</xsd:restriction>
+</xsd:simpleType>
+
+</xsd:schema>

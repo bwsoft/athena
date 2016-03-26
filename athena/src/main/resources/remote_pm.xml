@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<ParticipantMapping creation-date="2016-04-01T05:00:00" fromExchange="RemoteExch" numEntries="1" toExchange="LocalExch">
+	<MappingEntry iLinkSenderCompID="YRG0KK" CustomerID="89007" MemberID="0004" BranchID="0001" TellerID="ABC" ConnectionID="C001"/>
+</ParticipantMapping>
