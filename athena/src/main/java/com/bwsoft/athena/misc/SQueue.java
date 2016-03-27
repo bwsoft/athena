@@ -1,0 +1,51 @@
+package com.bwsoft.athena.misc;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+
+public class SQueue {
+	private SynchronousQueue<String> queue = new SynchronousQueue<String>();
+	
+	public static void main(String[] args) {
+		ExecutorService service = Executors.newFixedThreadPool(10);
+		
+		SQueue sq = new SQueue();
+		service.execute(sq.new Publisher());
+		service.execute(sq.new Publisher());
+		
+		// both publishers will only return after the creationg of two subscribers
+		service.execute(sq.new Subscriber());
+		service.execute(sq.new Subscriber());
+		
+		service.shutdown();
+	}
+	
+	private class Subscriber implements Runnable {
+
+		@Override
+		public void run() {
+			System.out.println("dequeue ...");
+			try {
+				System.out.println("got message: "+queue.take());
+			} catch( Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private class Publisher implements Runnable {
+
+		@Override
+		public void run() {
+			System.out.println("publishing ...");
+			try {
+				queue.put("hello");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("published");
+		}
+	}
+}
