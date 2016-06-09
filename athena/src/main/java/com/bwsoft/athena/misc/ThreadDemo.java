@@ -8,9 +8,16 @@ import java.util.concurrent.Future;
 
 public class ThreadDemo {
 	private boolean isAlive = true;
+	
+	private final static ThreadLocal<String> localName = new ThreadLocal<String> () {
+		@Override
+		protected String initialValue() {
+			return Thread.currentThread().getName();
+		}
+	};
 
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
-		ExecutorService service = Executors.newFixedThreadPool(1);
+		ExecutorService service = Executors.newFixedThreadPool(2);
 		
 		ThreadDemo demo = new ThreadDemo();
 		Callable<Boolean> worker = demo.new Worker();
@@ -63,6 +70,7 @@ public class ThreadDemo {
 
 		@Override
 		public Boolean call() throws InterruptedException {
+			System.out.println("My local name is: "+localName.get());
 			System.out.println("Call trace is: ");
 			Thread.dumpStack();
 			while( ! Thread.currentThread().isInterrupted() && isAlive ) {
