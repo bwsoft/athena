@@ -12,10 +12,7 @@ public class SQueue {
 		
 		SQueue sq = new SQueue();
 		service.execute(sq.new Publisher());
-		service.execute(sq.new Publisher());
 		
-		// both publishers will only return after the creationg of two subscribers
-		service.execute(sq.new Subscriber());
 		service.execute(sq.new Subscriber());
 		
 		service.shutdown();
@@ -25,11 +22,13 @@ public class SQueue {
 
 		@Override
 		public void run() {
-			System.out.println("dequeue ...");
-			try {
-				System.out.println("got message: "+queue.take());
-			} catch( Exception e) {
-				e.printStackTrace();
+			for( int i = 0; i < 5; i ++ ) {
+				System.out.println("dequeue ...");
+				try {
+					System.out.println("got message: "+queue.take());
+				} catch( Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -38,14 +37,16 @@ public class SQueue {
 
 		@Override
 		public void run() {
-			System.out.println("publishing ...");
-			try {
-				queue.put("hello");
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			for( int i = 0; i < 5; i ++ ) {
+				System.out.println("publishing ...");
+				try {
+					queue.put("hello");
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println("published");
 			}
-			System.out.println("published");
 		}
 	}
 }
