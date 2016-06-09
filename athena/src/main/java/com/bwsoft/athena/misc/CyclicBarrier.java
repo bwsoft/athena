@@ -60,7 +60,7 @@ public class CyclicBarrier {
 				e.printStackTrace();
 			}
 
-			System.out.println("work for, "+this.pos+", is completed after "+ (System.currentTimeMillis()-startTime));
+			System.out.println(Thread.currentThread().getName()+" work for, "+this.pos+", is completed after "+ (System.currentTimeMillis()-startTime));
 			try{
 				// hold this thread until all others are done. 
 				barrier.await();
