@@ -20,13 +20,18 @@ import org.slf4j.LoggerFactory;
 import com.bwsoft.athena.util.TraceCall;
 
 /**
- * Selector is not thread-safe. It is a good practice to do all operations via a single thread. 
+ * Selectors are themselves safe for use by multiple concurrent threads; their key sets, however, are not. 
+ * Typically the outcome of a selection operation if handled by a single thread or special care has to be 
+ * given in using the key set.
+ * 
  * This class takes care of the registration and the NIO event selection. Both are done via the 
  * same thread.
  * 
- * Be aware of the potential dead lock if not handled by the same thread for the above two actions.
+ * Be aware of the potential dead lock if not handled by the same thread for the above two actions since 
+ * the register() call by a SelectableChannel is sync on selector itself and its key set while an on going 
+ * select() call is sync on selector and its key set also.
  * 
- * A method needs to be added to remove a selectable channel from the selector.  
+ * TODO: A method needs to be added to support the removal of a SelectableChannel from the selector.  
  * 
  * @author yzhou
  *
@@ -36,6 +41,9 @@ public class NIOSelector extends Thread {
 	
 	private Selector selector;
 	
+	// create a single thread based service. It is to queue all registration requests in the thread
+	// execution queue. It wakes up the selector from the selection operation and register one
+	// request at a time.
 	private ExecutorService service = Executors.newSingleThreadExecutor();
 	private Registration pendingRegistration = null;
 	
@@ -63,10 +71,14 @@ public class NIOSelector extends Thread {
 		while( true ) {
 			try {
 				int readiness = selector.select();
+				
+				// register SelectableChannel that is pending for registration
 				if( null != pendingRegistration ) {
 					pendingRegistration.register();
 					pendingRegistration = null;
 				}
+				
+				// continue the select() operation if woke up for registration only
 				if( readiness == 0 ) continue;
 				
 				logger.debug("{} channles with events", readiness);
