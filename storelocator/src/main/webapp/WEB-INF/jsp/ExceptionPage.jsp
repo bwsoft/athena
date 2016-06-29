@@ -5,10 +5,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>myview</title>
+        <title>Exception</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
-        <p>Got a message: ${message}</p>
+        <h1>Exception</h1>
+        <p>Exception message: ${exception.exceptionMsg}</p>
     </body>
 </html>

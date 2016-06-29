@@ -4,6 +4,7 @@ defining our form.
 
 Next – the form:form tag plays an important role here; it’s very similar to the regular HTLM <form> tag 
 but the modelAttribute attribute is the key which specifies name of the model object that backs this form.
+The default modelAttribute will be "command" if not specified.
 
 Next – each input fields is using yet another useful tag from the Spring Form taglib – form: prefix. 
 Each of these fields specifies a path attribute – this must correspond to a getter / setter of the model 
