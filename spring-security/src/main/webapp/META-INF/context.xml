@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/storelocator">
+	<!--  
+	A global context is used in server.xml to protect the sensitive information to be 
+	contained in the package. 
+	
+	When using with Tomcat version 7 or earlier, the context.xml will not be updated automatically
+	even if it is changed in the META-INF in the package. It needs to be manually deleted from 
+	the deployed directory.
+	-->
+
+	<!-- Not needed if this resource is defined in the context.xml -->
+	<ResourceLink name="jdbc/poc" global="jdbc/poc" type="javax.sql.DataSource"/>
+</Context>
