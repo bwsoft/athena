@@ -40,6 +40,10 @@ import com.hazelcast.map.listener.EntryUpdatedListener;
  * 	
  * Discovering cluster members via multicast, TCP, EC2 cloud, or jcloud.
  * 
+ * @see <a href="http://docs.hazelcast.org/docs/3.7/manual/html-single/index.html">
+ * http://docs.hazelcast.org/docs/3.7/manual/html-single/index.html
+ * </a>
+ * 
  * @author yzhou
  *
  */
