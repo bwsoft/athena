@@ -1,8 +1,8 @@
-# define macros for testing
-macro( do_test argv result )
-  add_test(CMakeSample${argv} CMakeSample ${argv})
-  set_tests_properties(CMakeSample${argv} PROPERTIES PASS_REGULAR_EXPRESSION ${result})
-endmacro( do_test )
+# The following macros, do_test, has been defined in the module
+# macro( do_test argv result )
+#   add_test(CMakeSample${argv} CMakeSample ${argv})
+#   set_tests_properties(CMakeSample${argv} PROPERTIES PASS_REGULAR_EXPRESSION ${result})
+# endmacro( do_test )
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
@@ -15,5 +15,5 @@ install(TARGETS CMakeSample DESTINATION bin)
 # do a bunch of test
 include(CTest)
 
-do_test(25 "25 is 5")
-do_test(26 "26 is 6")
+do_test(CMakeSample 25 "25 is 5")
+do_test(CMakeSample 26 "26 is 6")

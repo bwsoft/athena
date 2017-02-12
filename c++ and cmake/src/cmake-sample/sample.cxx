@@ -12,6 +12,7 @@ int main(int argc, char * argv[])
    if( argc < 2 )
    {
       cout << argv[0] << " Version " << SAMPLE_VERSION_MAJOR << '.' << SAMPLE_VERSION_MINOR << endl;
+      cout << "Platform: " << OS << endl;
       cout << "Usage: " << argv[0] << " number" << endl;
       return 1;
    }
