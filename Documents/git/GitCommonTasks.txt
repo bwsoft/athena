@@ -1,0 +1,18 @@
+Fast Forward Local Branch
+  git pull --rebase
+
+Handle Detached Head
+  git checkout -B <new branch name> HEAD
+
+Merge Branches
+  git checkout master
+  git merge <branch name to be merged into master>
+  git status (find conflictions)
+  git mergetool (resolve conflictions or use eclipse)
+  git add (add resolved files to the repo)
+  git commit (complete merge process)
+
+Merge Branches Using Rebase
+  git checkout <branch name for branch to be merged into master)
+  git rebase master
+  -- The above works through the common ancestor of the two branches (the one you are on and the one you are rebasing onto), getting the difference introduced by each commit and saving those differences to temporary files, resetting the current branch to the same commit as the branch you are rebasing onto, and finally applying each change. There is no difference in the end as using git merge. But rebasing makes for a cleaner history.

@@ -1,0 +1,13 @@
+Creat a new repo at a git server:
+Clone the repo from the opriginal git server
+git remote rename origin upstream
+git remote add origin URL_TO_NEW_SERVER:repo name
+git push origin
+
+List remote
+git remote -v
+git remote show [remote name]
+
+Rename remote
+    git remote rename [old name] [new name]
+
