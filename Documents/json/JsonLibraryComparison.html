@@ -1,0 +1,73 @@
+<html>
+<head>
+</head>
+
+<body>
+Which JSON library for Java can parse JSON files the fastest?
+<p/>
+JSON is the accepted standard these days for transmitting data between servers and web applications, but like many things we’ve accepted, it’s easy to take it for granted and not put much further thought into it. We often don’t think about the JSON libraries we use, but there are some differences between them. With that in mind, we ran a benchmark test to see how fast four of the most popular JSON libraries for Java parse different sizes of files. Today, we’re sharing those results with you guys.
+<p/>
+JSON is often used to transport and parse big files. This is a scenario that’s common in data processing applications running in Hadoop or Spark clusters. Given the size of these files, you can be looking at significant differences in parsing speed between libraries.
+<p/>
+Small files come up all the time as incoming requests at high throughput, and parsing them happens quickly, so the differences in performance may not seem to be a big deal at first. But the differences add up, as often you need to parse lots of small files in rapid succession during times of heavy traffic. Micro services and distributed architectures often use JSON for transporting these kinds of files, as it’s the de facto format for web APIs.
+<p/>
+Not all JSON libraries perform the same. Picking the right one for your environment can be critical. This benchmark can help you decide. </p>
+<p/>
+The JSON Libraries
+<p/>
+JSON.simple vs GSON vs Jackson vs JSONP For the benchmark tests, we looked at four major JSON libraries for Java: JSON.simple, GSON, Jackson, and JSONP. All of these libraries are popularly used for JSON processing in a Java environment, and were chosen according to their popularity in Github projects. Here are the ones we tested:
+<ul>
+    <li>Yidong Fang’s JSON.simple (https://github.com/fangyidong/json-simple). JSON.simple is a Java toolkit for encoding and decoding JSON text. It’s meant to be a lightweight and simple library that still performs at a high level.</li>
+    <li> Google’s GSON (https://github.com/google/gson). GSON is a Java library that converts Java Objects into JSON and vice versa. It provides the added benefit of full support for Java Generics, and it doesn’t require you to annotate your classes. Not needing to add annotations makes for simpler implementation and can even be a requirement if you don’t have access to your source code. </li>
+    <li> FasterXML’s Jackson Project (https://github.com/FasterXML/jackson). Jackson is a group of data processing tools highlighted by its streaming JSON parser and generator library. Designed for Java, it can also handle other non-JSON encodings. It’s the most popular JSON parser, according to our findings on Github usages. </li>
+    <li> Oracle’s JSONP (https://jsonp.java.net/). JSONP (JSON Processing) is a Java API for JSON processing, namely around consuming and producing streaming JSON text. It’s the open source reference implementation of JSR353. </li>
+</ul>
+The Benchmark
+<p/>
+We ran a benchmark test on the libraries for both big files and small files. The requirements (and therefore performance) for handling different file sizes are different, as are the environments in which the need to parse these files arise.
+<p/>
+The benchmark tested two key scenarios: parsing speed for big files (190 MB) and parsing speed for small files (1 KB). The big files were taken from here: https://github.com/zeMirco/sf-city-lots-json. The small files were randomly generated from here: http://www.json-generator.com/.
+<p/>
+For both big and small files, we ran each file 10 times per library. Given the size of the big file, we did 10 iterations per run for each library. Each small file was iterated 10,000 times per run for each library. For the small files test, we didn’t retain the files in memory between iterations and the test was run on a c3.large instance on AWS.
+<p/>
+The results for the big file are shown in full below, but I’ve further averaged the results for the small files in the interest of space. To view the extended results, go here. If you want to view the source code for the small files or the libraries, go here.
+Big File Results<p/>
+<image src="LibraryComparison-1.jpg"/>
+Big differences here! Depending on the run, Jackson or JSON.simple traded fastest times, with Jackson edging out JSON.simple in aggregate. Looking at the average result across all the test runs, Jackson and JSON.simple come out well ahead on the big file, with JSONP a distant third and GSON far in last place.
+<p/>
+Let’s put that in percentage terms. Jackson is the winner in average time across all the runs. Looking at the numbers from two different angles, here are the percentage results: <p/>
+<image src="LibraryComparison-2.jpg"/>
+Takeaway: It was a photo finish, but Jackson is your winning library. JSON.simple is a nose behind and the other two are in the rearview mirror. <p/>
+Small Files Results<p/>
+<image src="LibraryCompariosn-3.jpg"/>
+The table above shows the average of 10 runs for each file, and the total average at the bottom. The tally for fastest library on number of files won is:
+<ul>
+    <li> GSON – 14 </li>
+    <li> JSONP – 5 </li>
+    <li> Jackson – 1 </li>
+    <li> JSON.simple – 0 </li>
+</ul>
+That seems pretty telling. However, looking at the average result for all the test runs across all the files, GSON is the winner here, with JSON.simple and JSONP taking a distinct second and third place, respectively. Jackson came in 2nd to last. So despite not being the fastest on any single file, JSON.simple is the second fastest in aggregate. And despite being the fastest on a handful of files, JSONP is well in third place in aggregate.
+<p/>
+Of interest to note is that despite being the slowest library here, Jackson is very consistent across all the files, while the other three libraries are occasionally much faster than Jackson, but on some files end up running at about the same speed or even slightly slower.
+<p/>
+Let’s put the numbers in percentage terms, again looking at the numbers from two different angles:<p/>
+<image src="LibraryComparison-4.jpg"/>
+Compared to the big file tests, these are smaller differences, but still quite noticeable.
+<p/>
+Takeaway: Bad luck for JSON.simple, as it again loses a close race, but GSON is your winner. JSONP is a clear third and Jackson brings up the rear.<p/>
+Conclusion
+<p/>
+Parsing speed isn’t the only consideration when choosing a JSON library, but it is an important one. Upon running this benchmark test, what we found was that there is no one library that blows the others away on parsing speed across all file sizes and all runs. The libraries that performed best for big files suffered for small files and vice versa.
+<p/>
+Choosing which library to use on the merit of parsing speed comes down to your environment then.
+<ul>
+    <li>If you have an environment that deals often or primarily with big JSON files, then Jackson is your library of interest. GSON struggles the most with big files. </li>
+    <li>If your environment primarily deals with lots of small JSON requests, such as in a micro services or distributed architecture setup, then GSON is your library of interest. Jackson struggles the most with small files. </li>
+    <li>If you end up having to often deal with both types of files, JSON.simple came in a very close 2nd place in both tests, making it a good workhorse for a variable environment. Neither Jackson nor GSON perform as well across multiple files sizes. </li>
+</ul>
+As far as parsing speed goes, JSONP doesn’t have much to recommend for it in any scenario. It performs poorly for both big and small files compared to other available options. Fortunately, Java 9 is reportedly getting native JSON implementation, which one would imagine is going to be an improvement over the reference implementation.
+<p/>
+So there you have it. If you’re concerned about parsing speed for your JSON library, choose Jackson for big files, GSON for small files, and JSON.simple for handling both. Let me know if you have any thoughts on this benchmark in the comments.<p/>
+</body>
+</html>
