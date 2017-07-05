@@ -1,0 +1,25 @@
+This project demonstrates how to use spring MVC form binding. It contains 
+two samples with one using JSP and another using Thymeleaf template engine. 
+ 
+Create project using maven arche type: maven-archetype-webapp. 
+
+Edit pom.xml to include necessary dependencies and plugins. Config 
+<deploy-path/> to specify where to place the generated jar files. Command, 
+mvn war:war, deploys the war file to the destination folder. Update
+project with new maven dependencies to get rid of the errors.
+
+Create/update src/main/webapp/WEB-INF/web.xml. Define Spring DispatcherServlet
+and map the servlet to an URL. The context root will be the war filename by 
+default.
+
+Create Spring context configuration file. By default this file is at 
+src/main/webapp/WEB-INF/<servlet name>-servlet.xml. Define the location of 
+controller files and view resolvers. For the Thymeleaf template engine, 
+specify the template engine and the thymeleaf view resolver. See
+http://www.thymeleaf.org/doc/tutorials/2.1/thymeleafspring.html for thymeleaf
+spring configuration. 
+
+For Thymeleaf, create Thymeleaf templates, employee.html and result.html. 
+Create an entity bean, Employee, to model fields in a form. Create a 
+controller, ThymeleafFormBindingController, to perform the request mapping 
+and model/view association.  
