@@ -26,10 +26,15 @@
       <property name="templateResolver" ref="templateResolver" />
     </bean>
 
-    <!-- Use viewNames to limit the view resolver for html and xhtml only -->
+     <!-- 
+        Use viewNames to limit the view resolver for html and xhtml only
+        Use property, order, to define the priority of view resolver. The
+        lower the number, the higher the priority. 
+    -->
     <bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
         <property name="templateEngine" ref="templateEngine" />
         <property name="viewNames" value="*.html,*.xhtml" />
+        <property name="order" value="0"></property>
     </bean>    
   
     <!-- Include sub-directory name as part of the view name when jsp is in sub directory -->
@@ -40,5 +45,6 @@
         <property name="suffix">
             <value>.jsp</value>
         </property>
+        <property name="order" value="2"></property>
     </bean>
 </beans>
